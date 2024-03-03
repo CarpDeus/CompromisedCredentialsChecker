@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/comprisedcredentialschecker.svg)](https://www.nuget.org/packages/CompromisedCredentialsChecker/)
+[![NuGet](https://img.shields.io/nuget/v/CompromisedCredentialsChecker.svg)](https://www.nuget.org/packages/CompromisedCredentialsChecker/)
 
 # CompromisedCredentialsChecker
 NuGet Package for [HaveIBeenPwned V3 API](https://haveibeenpwned.com/API/v3)
