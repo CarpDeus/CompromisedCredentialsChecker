@@ -8,7 +8,7 @@
           ]
         }
       ],
-      "dest": "api"
+      "dest": "docs"
     }
   ],
   "build": {
@@ -35,8 +35,8 @@
       "modern"
     ],
     "globalMetadata": {
-      "_appName": "mysite",
-      "_appTitle": "mysite",
+      "_appName": "CompromisedCredentialsChecker",
+      "_appTitle": "CompromisedCredentialsChecker",
       "_enableSearch": true,
       "pdf": true
     }

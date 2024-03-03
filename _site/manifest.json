@@ -114,6 +114,86 @@
       "version": ""
     },
     {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.Checker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.Checker.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPBreach.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPBreach.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPBreachName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPBreachName.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPPaste.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPPaste.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPPastes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPPastes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPSubscribedDomain.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPSubscribedDomain.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.HIBPSubscriptionStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.HIBPSubscriptionStatus.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "docs/CompromisedCredentialsChecker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/CompromisedCredentialsChecker.html"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Conceptual",
       "source_relative_path": "docs/getting-started.md",
       "output": {
