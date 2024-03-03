@@ -1,0 +1,188 @@
+{
+  "source_base_path": "Y:/CompromisedCredentialsChecker",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.Checker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.Checker.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPBreach.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPBreach.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPBreachName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPBreachName.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPPaste.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPPaste.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPPastes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPPastes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPSubscribedDomain.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPSubscribedDomain.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.HIBPSubscriptionStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.HIBPSubscriptionStatus.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CompromisedCredentialsChecker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CompromisedCredentialsChecker.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "docs/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "docs/toc.html"
+        },
+        ".json": {
+          "relative_path": "docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "src/CompromisedCredentialsChecker/ReadMe.md",
+      "output": {
+        ".html": {
+          "relative_path": "src/CompromisedCredentialsChecker/ReadMe.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
