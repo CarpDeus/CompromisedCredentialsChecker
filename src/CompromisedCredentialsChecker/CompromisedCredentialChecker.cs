@@ -50,7 +50,7 @@ namespace CompromisedCredentialsChecker
 
             long retVal;
             // Check to see if the requested password is in the returned list
-            if (response.Content.Contains(sha1PasswordSuffix))
+            if (!response.Content.Contains(sha1PasswordSuffix))
             { return 0; }
             else
             {
