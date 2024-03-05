@@ -26,8 +26,13 @@ namespace CompromisedCredentialsChecker
             // The API only takes the first 5 of the SHA1 hashed password and only returns
             // the last part of the SHA1 hashed password
             string sha1Password = Hash(PlainPassword);
+#if NET8_0_OR_GREATER
+            string sha1PasswordRange = sha1Password[..5];
+            string sha1PasswordSuffix = sha1Password[5..];
+#else
             string sha1PasswordRange = sha1Password.Substring(0, 5);
             string sha1PasswordSuffix = sha1Password.Substring(5);
+#endif
             string pwnedURI = $"https://api.pwnedpasswords.com/range/{sha1PasswordRange}";
 
             RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
@@ -45,7 +50,7 @@ namespace CompromisedCredentialsChecker
 
             long retVal;
             // Check to see if the requested password is in the returned list
-            if (response.Content.IndexOf(sha1PasswordSuffix) == -1)
+            if (!response.Content.Contains(sha1PasswordSuffix))
             { return 0; }
             else
             {
@@ -68,9 +73,17 @@ namespace CompromisedCredentialsChecker
         private static void HandlePwnedApiErrors(string ApiKey, RestResponse response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                string errorMessage;
-                switch (response.StatusCode)
+            {string errorMessage;
+#if NET8_0_OR_GREATER
+                errorMessage = response.StatusCode switch
+                {
+                    System.Net.HttpStatusCode.Unauthorized => $"API {ApiKey} is not authorized",
+                    System.Net.HttpStatusCode.Forbidden => $"User Agent Not supplied",
+                    _ => $"Call returned {response.StatusCode} ({response.StatusDescription})",
+                };
+#else
+
+ switch (response.StatusCode)
                 {
                     case System.Net.HttpStatusCode.Unauthorized:
                         errorMessage = $"API {ApiKey} is not authorized"; break;
@@ -78,6 +91,7 @@ namespace CompromisedCredentialsChecker
                         errorMessage = $"User Agent Not supplied"; break;
                     default: errorMessage = $"Call returned {response.StatusCode} ({response.StatusDescription})"; break;
                 }
+#endif
                 throw new HttpRequestException(errorMessage);
             }
         }
@@ -361,7 +375,11 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
+#if NET8_0_OR_GREATER
+                return [];
+#else
                 return new HIBPPastes();
+#endif
             }
 
             // Handle errors
@@ -399,8 +417,7 @@ namespace CompromisedCredentialsChecker
         static string Hash(string input)
         {
 #if NET8_0_OR_GREATER
-            using SHA1 sha1 = SHA1.Create();
-            var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+            var hash = SHA1.HashData(Encoding.UTF8.GetBytes(input));
             var sb = new StringBuilder(hash.Length * 2);
 
             foreach (byte b in hash)
