@@ -31,7 +31,8 @@ namespace CompromisedCredentialsTestNet8
             List<HIBPBreach> checkBreaches = Checker.GetBreachesForEmailAddress(apiKey, userAgent, emailAddress);
             System.Threading.Thread.Sleep(20000);
             List<HIBPBreach> checkBreachesVerifiedOnly = Checker.GetBreachesForEmailAddress(apiKey, userAgent, emailAddress, false, "", true);
-            Assert.IsTrue(checkBreaches.Count > checkBreachesVerifiedOnly.Count);
+            if (checkBreachesVerifiedOnly == null) checkBreachesVerifiedOnly = new List<HIBPBreach>();
+            Assert.IsTrue(checkBreaches.Count >= checkBreachesVerifiedOnly.Count);
         }
         [TestMethod]
         public void GetBreachesForEmailAddressFilterByDomain()

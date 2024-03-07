@@ -5,6 +5,11 @@ using System.Text;
 using System;
 using System.Security.Cryptography;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CompromisedCredentialsChecker
 {
@@ -13,57 +18,36 @@ namespace CompromisedCredentialsChecker
     /// </summary>
     public class Checker
     {
-
-        /// <summary>
-        /// Determine if the password has been found in a hack
-        /// </summary>
-        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
-        /// <param name="UserAgent">String to indicate what application is using the API</param>
-        /// <param name="PlainPassword">The password to be checked</param>
-        /// <returns>The number of data breaches the password has been found in</returns>
-        public static Int64 PasswordCheck(string ApiKey, string UserAgent, string PlainPassword)
+        static readonly string emptyJsonString = "{}";
+        #region Helper Methods
+        static string Hash(string input)
         {
-            // The API only takes the first 5 of the SHA1 hashed password and only returns
-            // the last part of the SHA1 hashed password
-            string sha1Password = Hash(PlainPassword);
 #if NET8_0_OR_GREATER
-            string sha1PasswordRange = sha1Password[..5];
-            string sha1PasswordSuffix = sha1Password[5..];
+            var hash = SHA1.HashData(Encoding.UTF8.GetBytes(input));
+            var sb = new StringBuilder(hash.Length * 2);
+
+            foreach (byte b in hash)
+            {
+                sb.Append(b.ToString("X2"));
+            }
+
+            return sb.ToString();
 #else
-            string sha1PasswordRange = sha1Password.Substring(0, 5);
-            string sha1PasswordSuffix = sha1Password.Substring(5);
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+                var sb = new StringBuilder(hash.Length * 2);
+
+                foreach (byte b in hash)
+                {
+                    sb.Append(b.ToString("X2"));
+                }
+
+                return sb.ToString();
+            }
 #endif
-            string pwnedURI = $"https://api.pwnedpasswords.com/range/{sha1PasswordRange}";
-
-            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
-
-            //	Not found — the account could not be found and has therefore not been pwned
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return 0;
-            }
-
-            // Handle errors
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            { HandlePwnedApiErrors(ApiKey, response); }
-
-
-            long retVal;
-            // Check to see if the requested password is in the returned list
-            if (!response.Content.Contains(sha1PasswordSuffix))
-            { return 0; }
-            else
-            {
-                int hashLocation = response.Content.IndexOf(sha1PasswordSuffix);
-                int eolLocation = response.Content.IndexOf('\r', hashLocation);
-                int colonLocation = response.Content.IndexOf(':', hashLocation);
-                string count = response.Content.Substring(colonLocation + 1, eolLocation - colonLocation);
-                Int64.TryParse(count, out retVal);
-            }
-            return retVal;
 
         }
-
         /// <summary>
         /// Handler for all the errors that can be returned from the API
         /// </summary>
@@ -73,7 +57,8 @@ namespace CompromisedCredentialsChecker
         private static void HandlePwnedApiErrors(string ApiKey, RestResponse response)
         {
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {string errorMessage;
+            {
+                string errorMessage;
 #if NET8_0_OR_GREATER
                 errorMessage = response.StatusCode switch
                 {
@@ -130,15 +115,85 @@ namespace CompromisedCredentialsChecker
         /// <returns></returns>
         private static T DeserializeJSON<T>(string Json) where T : class
         {
+            if (string.IsNullOrEmpty(Json) || Json == "{}" || Json == "[]")
+            {
+                return null;
+            }
+            else
+            {
 #if NET8_0_OR_GREATER
-            return System.Text.Json.JsonSerializer.Deserialize<T>(Json);
+                return System.Text.Json.JsonSerializer.Deserialize<T>(Json);
 #else
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(Json);
 #endif
+            }
+        }
+
+        private static void ParsePassword(string PlainPassword, out string sha1PasswordRange, out string sha1PasswordSuffix)
+        {
+            // The API only takes the first 5 of the SHA1 hashed password and only returns
+            // the last part of the SHA1 hashed password
+            string sha1Password = Hash(PlainPassword);
+#if NET8_0_OR_GREATER
+            sha1PasswordRange = sha1Password[..5];
+            sha1PasswordSuffix = sha1Password[5..];
+#else
+            sha1PasswordRange = sha1Password.Substring(0, 5);
+            sha1PasswordSuffix = sha1Password.Substring(5);
+#endif
+        }
+        #endregion
+
+        /// <summary>
+        /// Determine if the password has been found in a hack, returns API results as a string
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="PlainPassword">The password to be checked</param>
+        /// <returns>Raw result from the API</returns>
+        public static string PasswordCheckResults(string ApiKey, string UserAgent, string PlainPassword)
+        {
+            string sha1PasswordRange;
+            string sha1PasswordSuffix;
+            ParsePassword(PlainPassword, out sha1PasswordRange, out sha1PasswordSuffix);
+            string pwnedURI = $"https://api.pwnedpasswords.com/range/{sha1PasswordRange}";
+            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
+            return response.Content;
+
         }
 
         /// <summary>
-        /// Determine all the breaches the email address has been involved in.
+        /// Determine if the password has been found in a hack
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="PlainPassword">The password to be checked</param>
+        /// <returns>The number of data breaches the password has been found in</returns>
+        public static Int64 PasswordCheck(string ApiKey, string UserAgent, string PlainPassword)
+        {
+            string sha1PasswordRange;
+            string sha1PasswordSuffix;
+            ParsePassword(PlainPassword, out sha1PasswordRange, out sha1PasswordSuffix);
+            string fromApi = PasswordCheckResults(ApiKey, UserAgent, PlainPassword);
+            long retVal;
+            // Check to see if the requested password is in the returned list
+            if (!fromApi.Contains(sha1PasswordSuffix))
+            { return 0; }
+            else
+            {
+                int hashLocation = fromApi.IndexOf(sha1PasswordSuffix);
+                int eolLocation = fromApi.IndexOf('\r', hashLocation);
+                int colonLocation = fromApi.IndexOf(':', hashLocation);
+                string count = fromApi.Substring(colonLocation + 1, eolLocation - colonLocation);
+                Int64.TryParse(count, out retVal);
+            }
+            return retVal;
+
+        }
+
+
+        /// <summary>
+        /// Determine all the breaches the email address has been involved in. Returns API results as a string
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
@@ -146,8 +201,8 @@ namespace CompromisedCredentialsChecker
         /// <param name="NamesOnly">If true, only the names of the breaches are returned. If False, all breach data returned. Default is true and returns all information about the breaches</param>
         /// <param name="DomainFilter">If supplied, only breaches against the domain are returned.</param>
         /// <param name="ExcludeUnverified">If true, this excludes breaches that have been flagged as "unverified". By default, both verified and unverified breaches are returned if this parameter not included or passed in as true</param>
-        /// <returns>Array of breaches that the email address has been involved in. If the number of breaches is 0 (zero) than the email address has not been involved in a breach</returns>
-        public static List<HIBPBreach> GetBreachesForEmailAddress(string ApiKey, string UserAgent, string EmailAddress, bool NamesOnly = true, string DomainFilter = "", bool ExcludeUnverified = false)
+        /// <returns>Raw result from the API</returns>
+        public static string GetBreachesForEmailAddressResult(string ApiKey, string UserAgent, string EmailAddress, bool NamesOnly = true, string DomainFilter = "", bool ExcludeUnverified = false)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/breachedaccount/{EmailAddress}";
             bool hasParameters = false;
@@ -188,12 +243,56 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<List<HIBPBreach>>(response.Content);
+            return response.Content;
+        }
+
+        /// <summary>
+        /// Determine all the breaches the email address has been involved in.
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="EmailAddress">Email address to be searched for</param>
+        /// <param name="NamesOnly">If true, only the names of the breaches are returned. If False, all breach data returned. Default is true and returns all information about the breaches</param>
+        /// <param name="DomainFilter">If supplied, only breaches against the domain are returned.</param>
+        /// <param name="ExcludeUnverified">If true, this excludes breaches that have been flagged as "unverified". By default, both verified and unverified breaches are returned if this parameter not included or passed in as true</param>
+        /// <returns>Array of breaches that the email address has been involved in. If the number of breaches is 0 (zero) than the email address has not been involved in a breach</returns>
+        public static List<HIBPBreach> GetBreachesForEmailAddress(string ApiKey, string UserAgent, string EmailAddress, bool NamesOnly = true, string DomainFilter = "", bool ExcludeUnverified = false)
+        {
+
+            return DeserializeJSON<List<HIBPBreach>>(GetBreachesForEmailAddressResult(ApiKey, UserAgent, EmailAddress, NamesOnly, DomainFilter));
+        }
+
+
+        /// <summary>
+        /// Determine all the breaches for email addresses for a specific domain. Returns API results as a string
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="Domain">Email address to be searched for</param>
+        /// <returns>Raw result from the API</returns>
+        public static string GetBreachedEmailsForDomainResult(string ApiKey, string UserAgent, string Domain)
+        {
+            string pwnedURI = $"https://haveibeenpwned.com/api/v3/breacheddomain/{Domain}";
+            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
+
+            //	Not found — the account could not be found and has therefore not been pwned
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return emptyJsonString;
+            }
+            // Handle errors
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            { HandlePwnedApiErrors(ApiKey, response); }
+            //var parsed= JsonConvert.DeserializeObject<JObject>(response.Content);
+            //var parsed2 = DeserializeJSON<JsonObject>(response.Content);
+            //var result = new List<HIBPDomainBreachedEmails>();
+
+            return response.Content;
         }
 
         /// <summary>
@@ -203,28 +302,46 @@ namespace CompromisedCredentialsChecker
         /// <param name="UserAgent">String to indicate what application is using the API</param>
         /// <param name="Domain">Email address to be searched for</param>
         /// <returns>All email addresses on a given domain and the breaches they've appeared in can be returned via the domain search API. Only domains that have been successfully added to the domain search dashboard after verifying control can be searched. </returns>
-        public static dynamic GetBreachedEmailsForDomain(string ApiKey, string UserAgent, string Domain)
+        public static List<HIBPDomainBreachedEmails> GetBreachedEmailsForDomain(string ApiKey, string UserAgent, string Domain)
         {
-            string pwnedURI = $"https://haveibeenpwned.com/api/v3/breacheddomain/{Domain}";
-            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
-
-            //	Not found — the account could not be found and has therefore not been pwned
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            List<HIBPDomainBreachedEmails> retVal = new List<HIBPDomainBreachedEmails>();
+            string results = GetBreachedEmailsForDomainResult(ApiKey, UserAgent, Domain);
+            // First split into array of strings
+            if(results == emptyJsonString)
             {
-                return null;
+                return retVal;
             }
-            // Handle errors
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<dynamic>(response.Content);
+            else
+            {
+                results = results.Replace("{", "").Replace("}", "");
+                string[] splitResults = results.Split(']');
+                foreach (string s in splitResults)
+                {
+                    string[] splitEmails = s.Split(':');
+                    if(splitEmails.Length < 2)
+                    {
+                        continue;
+                    }
+                    List<string> breaches = new List<string>();
+                    foreach(string breach in splitEmails[1].Split(','))
+                    {
+                        breaches.Add(breach.Replace("\"", "").Replace("[", "").Replace("]", ""));
+                    }
+                    
+                    retVal.Add(new HIBPDomainBreachedEmails() { Alias= splitEmails[0].Replace("\"", ""), Breaches = breaches.ToArray() });
+                }
+                return retVal;
+            }
         }
 
+
         /// <summary>
-        /// Get a list of all domains that the API has subscribed to for breach notifications
+        /// Get a list of all domains that the API has subscribed to for breach notifications. Returns API results as a string
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
-        public static List<HIBPSubscribedDomain> GetSubscribedDomains(string ApiKey, string UserAgent)
+        /// <returns>Raw result from the API</returns>
+        public static string GetSubscribedDomainsResult(string ApiKey, string UserAgent)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/subscribeddomains";
             RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
@@ -232,23 +349,35 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<dynamic>(response.Content);
+            return response.Content;
         }
 
         /// <summary>
-        /// Get a list of all of the breaches in the system
+        /// Get a list of all domains that the API has subscribed to for breach notifications
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <returns>List of all domains that the API has subscribed to for breach notifications</returns>
+        public static List<HIBPSubscribedDomain> GetSubscribedDomains(string ApiKey, string UserAgent)
+        {
+            return DeserializeJSON<List<HIBPSubscribedDomain>>(GetSubscribedDomainsResult(ApiKey, UserAgent));
+        }
+
+
+        /// <summary>
+        /// Get a list of all of the breaches in the system. Returns API results as a string
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
         /// <param name="DomainFilter">If supplied, only breaches against the domain are returned.</param>
         /// <param name="IsSpamList">Filters the result set to only breaches that either are or are not flagged as a spam list.</param>
-
-        public static List<HIBPBreach> GetAllBreaches(string ApiKey, string UserAgent, string DomainFilter = "", bool IsSpamList = false)
+        /// <returns>Raw result from the API</returns>
+        public static string GetAllBreachesResult(string ApiKey, string UserAgent, string DomainFilter = "", bool IsSpamList = false)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/breaches";
             bool hasParameters = false;
@@ -285,21 +414,37 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<List<HIBPBreach>>(response.Content);
+            return response.Content;
         }
 
         /// <summary>
-        /// Get a breach by name
+        /// Get a list of all of the breaches in the system
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="DomainFilter">If supplied, only breaches against the domain are returned.</param>
+        /// <param name="IsSpamList">Filters the result set to only breaches that either are or are not flagged as a spam list.</param>
+        /// <returns>List of all of the breaches in the system</returns>
+        public static List<HIBPBreach> GetAllBreaches(string ApiKey, string UserAgent, string DomainFilter = "", bool IsSpamList = false)
+        {
+
+            return DeserializeJSON<List<HIBPBreach>>(GetAllBreachesResult(ApiKey, UserAgent, DomainFilter, IsSpamList));
+        }
+
+
+        /// <summary>
+        /// Get a breach by name. Returns API results as a string
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
         /// <param name="BreachName">Name of the breach from the list of breaches</param>
-        public static HIBPBreach GetSingleBreachedSiteByName(string ApiKey, string UserAgent, string BreachName)
+        /// <returns>Raw result from the API</returns>
+        public static string GetSingleBreachedSiteByNameResult(string ApiKey, string UserAgent, string BreachName)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/breach/{BreachName}";
             RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
@@ -307,12 +452,26 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<HIBPBreach>(response.Content);
+            return response.Content;
+        }
+
+
+        /// <summary>
+        /// Get a breach by name
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="BreachName">Name of the breach from the list of breaches</param>
+        /// <returns>Breach details</returns>
+        public static HIBPBreach GetSingleBreachedSiteByName(string ApiKey, string UserAgent, string BreachName)
+        {
+
+            return DeserializeJSON<HIBPBreach>(GetSingleBreachedSiteByNameResult(ApiKey, UserAgent, BreachName));
         }
 
 
@@ -321,7 +480,8 @@ namespace CompromisedCredentialsChecker
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
-        public static HIBPBreach GetMostRecentBreachAdded(string ApiKey, string UserAgent)
+        /// <returns>Raw result from the API</returns>
+        public static string GetMostRecentBreachAddedResult(string ApiKey, string UserAgent)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/latestbreach";
 
@@ -330,20 +490,32 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<HIBPBreach>(response.Content);
+            return response.Content;
         }
 
         /// <summary>
-        /// Get all of the data classes in the system
+        /// Get the most recently added breach
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
-        public static List<string> GetAllDataClasses(string ApiKey, string UserAgent)
+        /// <returns>Most recent breach details</returns>
+        public static HIBPBreach GetMostRecentBreachAdded(string ApiKey, string UserAgent)
+        {
+            return DeserializeJSON<HIBPBreach>(GetMostRecentBreachAddedResult(ApiKey, UserAgent));
+        }
+
+        /// <summary>
+        /// Get all of the data classes in the system. Returns API results as a string
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <returns>Raw result from the API</returns>
+        public static string GetAllDataClassesResult(string ApiKey, string UserAgent)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/dataclasses";
 
@@ -352,14 +524,50 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<List<string>>(response.Content);
+            return (response.Content);
         }
 
+        /// <summary>
+        /// Get all of the data classes in the system
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <returns>List of all of the data classes in the system</returns>
+        public static List<string> GetAllDataClasses(string ApiKey, string UserAgent)
+        {
+            return DeserializeJSON<List<string>>(GetAllDataClassesResult(ApiKey, UserAgent));
+        }
+
+        /// <summary>
+        /// Check for pastes that have been found that include this email address. Returns API results as a string
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <param name="emailAddress">Email address to be searched for</param>
+        /// <returns>Raw result from the API</returns>
+        public static string CheckPastesResult(string ApiKey, string UserAgent, string emailAddress)
+        {
+            string pwnedURI = $"https://haveibeenpwned.com/api/v3/pasteaccount/{emailAddress}";
+            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
+            //	Not found — the account could not be found and has therefore not been pwned
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return emptyJsonString;
+            }
+
+            // Handle errors
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                HandlePwnedApiErrors(ApiKey, response);
+            }
+            return response.Content;
+
+        }
 
         /// <summary>
         /// Check for pastes that have been found that include this email address
@@ -370,33 +578,16 @@ namespace CompromisedCredentialsChecker
         /// <returns>List of pastes with details</returns>
         public static HIBPPastes CheckPastes(string ApiKey, string UserAgent, string emailAddress)
         {
-            string pwnedURI = $"https://haveibeenpwned.com/api/v3/pasteaccount/{emailAddress}";
-            RestResponse response = CallPwnedRestApi(ApiKey, UserAgent, pwnedURI);
-            //	Not found — the account could not be found and has therefore not been pwned
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-#if NET8_0_OR_GREATER
-                return [];
-#else
-                return new HIBPPastes();
-#endif
-            }
-
-            // Handle errors
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                HandlePwnedApiErrors(ApiKey, response);
-            }
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<HIBPPastes>(response.Content);
-
+            return DeserializeJSON<HIBPPastes>(CheckPastesResult(ApiKey, UserAgent, emailAddress));
         }
 
         /// <summary>
-        /// Get details of the current subscription 
+        /// Get details of the current subscription. Returns API results as a string 
         /// </summary>
         /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
         /// <param name="UserAgent">String to indicate what application is using the API</param>
-        public static HIBPSubscriptionStatus GetSubscriptionStatus(string ApiKey, string UserAgent)
+        /// <returns>Raw result from the API</returns>
+        public static string GetSubscriptionStatusResult(string ApiKey, string UserAgent)
         {
             string pwnedURI = $"https://haveibeenpwned.com/api/v3/subscription/status";
 
@@ -405,43 +596,27 @@ namespace CompromisedCredentialsChecker
             //	Not found — the account could not be found and has therefore not been pwned
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                return emptyJsonString;
             }
             // Handle errors
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             { HandlePwnedApiErrors(ApiKey, response); }
-            return DeserializeJSON<HIBPSubscriptionStatus>(response.Content);
+            return response.Content;
         }
 
-
-        static string Hash(string input)
+        /// <summary>
+        /// Get details of the current subscription 
+        /// </summary>
+        /// <param name="ApiKey">API Key from https://haveibeenpwned.com/API/Key</param>
+        /// <param name="UserAgent">String to indicate what application is using the API</param>
+        /// <returns>Details of the current subscription</returns>
+        public static HIBPSubscriptionStatus GetSubscriptionStatus(string ApiKey, string UserAgent)
         {
-#if NET8_0_OR_GREATER
-            var hash = SHA1.HashData(Encoding.UTF8.GetBytes(input));
-            var sb = new StringBuilder(hash.Length * 2);
 
-            foreach (byte b in hash)
-            {
-                sb.Append(b.ToString("X2"));
-            }
-
-            return sb.ToString();
-#else
-            using (SHA1Managed sha1 = new SHA1Managed())
-            {
-                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
-                var sb = new StringBuilder(hash.Length * 2);
-
-                foreach (byte b in hash)
-                {
-                    sb.Append(b.ToString("X2"));
-                }
-
-                return sb.ToString();
-            }
-#endif
-
+            return DeserializeJSON<HIBPSubscriptionStatus>(GetSubscriptionStatusResult(ApiKey, UserAgent));
         }
+
+        
     }
 
     /// <summary>
@@ -614,5 +789,20 @@ namespace CompromisedCredentialsChecker
         public int Rpm { get; set; }
 
 
+    }
+
+    /// <summary>
+    /// Breached emails for domains controlled with the API
+    /// </summary>
+    public class HIBPDomainBreachedEmails
+    {
+        /// <summary>
+        /// Alias for the breached email
+        /// </summary>
+        public string Alias { get; set; }
+        /// <summary>
+        /// Array of breaches that the email has been found in 
+        /// </summary>
+        public string[] Breaches { get; set; }
     }
 }
