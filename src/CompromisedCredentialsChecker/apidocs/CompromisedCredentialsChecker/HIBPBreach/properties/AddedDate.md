@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.1.0+22dbbdca84054ddb046fb45a459f0b9fcca949b8
 
 The date and time (precision to the minute) the breach was added to the system in ISO 8601 format.
 

@@ -10,7 +10,7 @@
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.1.0+22dbbdca84054ddb046fb45a459f0b9fcca949b8
 
 Get the most recently added breach
 
@@ -31,6 +31,8 @@ String to indicate what application is using the API
 ## Returns
 
 [HIBPBreach](../../HIBPBreach/index.md)
+
+Most recent breach details
 
 ___
 

@@ -29,6 +29,7 @@ namespace CompromisedCredentialsTestNet8
                 Assert.Fail("API Key not set");
             }
             HIBPPastes checkPastes = Checker.CheckPastes(apiKey, userAgent, $"{Guid.NewGuid()}@azure-architect.com");
+            if(checkPastes == null) checkPastes = new HIBPPastes();
             Assert.AreEqual(checkPastes.Count, 0);
         }
     }

@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.1.0+22dbbdca84054ddb046fb45a459f0b9fcca949b8
 
 The domain of the primary website the breach occurred on. This may be used for identifying other assets external systems may have for the site.
 

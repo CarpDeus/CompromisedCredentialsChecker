@@ -10,7 +10,7 @@
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.1.0+22dbbdca84054ddb046fb45a459f0b9fcca949b8
 
 Get a list of all of the breaches in the system
 
@@ -39,6 +39,8 @@ Filters the result set to only breaches that either are or are not flagged as a 
 ## Returns
 
 List\<[HIBPBreach](../../HIBPBreach/index.md)\>
+
+List of all of the breaches in the system
 
 ___
 
