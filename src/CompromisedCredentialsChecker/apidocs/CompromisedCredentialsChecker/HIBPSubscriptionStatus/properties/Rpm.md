@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPSubscriptionStatus](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
+**Assembly Version:** 1.1.0+22dbbdca84054ddb046fb45a459f0b9fcca949b8
 
 The rate limit in requests per minute. This applies to the rate the breach search by email address API can be requested.
 
