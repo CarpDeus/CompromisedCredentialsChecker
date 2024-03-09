@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
 The date (with no time) the breach originally occurred on in ISO 8601 format. This is not always accurate — frequently breaches are discovered and reported long after the original incident. Use this attribute as a guide only.
 

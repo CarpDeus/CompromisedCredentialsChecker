@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
 A descriptive title for the breach suitable for displaying to end users. It's unique across all breaches but individual values may change in the future (i.e. if another breach occurs against an organisation already in the system). If a stable value is required to reference the breach, refer to the "Name" attribute instead.
 

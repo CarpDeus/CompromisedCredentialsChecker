@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
 Indicates if the breach is subscription free. This flag has no impact on any other attributes, it is only used when running a domain search where a sufficiently sized subscription isn't present.
 

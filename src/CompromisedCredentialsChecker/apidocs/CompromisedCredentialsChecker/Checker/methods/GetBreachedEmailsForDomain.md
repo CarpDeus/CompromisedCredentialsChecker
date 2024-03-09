@@ -10,12 +10,12 @@
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
 Determine all the breaches for email addresses for a specific domain.
 
 ```csharp
-public static object GetBreachedEmailsForDomain(string ApiKey, string UserAgent, string Domain);
+public static List<HIBPDomainBreachedEmails> GetBreachedEmailsForDomain(string ApiKey, string UserAgent, string Domain);
 ```
 
 ## Parameters
@@ -34,7 +34,7 @@ Email address to be searched for
 
 ## Returns
 
-object
+List\<[HIBPDomainBreachedEmails](../../HIBPDomainBreachedEmails/index.md)\>
 
 All email addresses on a given domain and the breaches they've appeared in can be returned via the domain search API. Only domains that have been successfully added to the domain search dashboard after verifying control can be searched. 
 

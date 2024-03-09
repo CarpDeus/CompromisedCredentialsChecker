@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPBreach](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.0\-alpha+23c76aa59eca04a3d453c27db8bebfed2cebeb6d
+**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
 The date and time (precision to the minute) the breach was modified in ISO 8601 format. This will only differ from the AddedDate attribute if other attributes represented here are changed or data in the breach itself is changed (i.e. additional data is identified and loaded). It is always either equal to or greater then the AddedDate attribute, never less than.
 

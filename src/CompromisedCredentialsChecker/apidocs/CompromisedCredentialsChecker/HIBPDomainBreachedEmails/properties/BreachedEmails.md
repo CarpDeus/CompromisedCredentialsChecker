@@ -5,22 +5,20 @@
   </auto-generated>   
 -->
 
-# HIBPBreach.IsRetired Property
+# HIBPDomainBreachedEmails.BreachedEmails Property
 
-**Declaring Type:** [HIBPBreach](../index.md)  
+**Declaring Type:** [HIBPDomainBreachedEmails](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
 **Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
 
-Indicates if the breach has been retired. This data has been permanently removed and will not be returned by the API.
-
 ```csharp
-public bool IsRetired { get; set; }
+public string[] BreachedEmails { get; set; }
 ```
 
 ## Property Value
 
-bool
+string\[\]
 
 ___
 
