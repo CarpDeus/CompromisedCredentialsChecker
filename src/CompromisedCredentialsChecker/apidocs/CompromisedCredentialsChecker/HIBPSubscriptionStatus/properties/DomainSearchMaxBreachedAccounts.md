@@ -10,7 +10,7 @@
 **Declaring Type:** [HIBPSubscriptionStatus](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
+**Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
 
 The size of the largest domain the subscription can search. This is expressed in the total number of breached accounts on the domain, excluding those that appear solely in spam list.
 

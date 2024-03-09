@@ -5,17 +5,17 @@
   </auto-generated>   
 -->
 
-# Checker.PasswordCheck Method
+# Checker.GetSubscribedDomainsResult Method
 
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
 **Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
 
-Determine if the password has been found in a hack
+Get a list of all domains that the API has subscribed to for breach notifications. Returns API results as a string
 
 ```csharp
-public static long PasswordCheck(string ApiKey, string UserAgent, string PlainPassword);
+public static string GetSubscribedDomainsResult(string ApiKey, string UserAgent);
 ```
 
 ## Parameters
@@ -28,15 +28,11 @@ API Key from https:\/\/haveibeenpwned.com\/API\/Key
 
 String to indicate what application is using the API
 
-`PlainPassword`  string
-
-The password to be checked
-
 ## Returns
 
-long
+string
 
-The number of data breaches the password has been found in
+Raw result from the API
 
 ___
 

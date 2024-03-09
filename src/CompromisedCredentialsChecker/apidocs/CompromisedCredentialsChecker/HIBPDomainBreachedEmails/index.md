@@ -9,7 +9,9 @@
 
 **Namespace:** [CompromisedCredentialsChecker](../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
+**Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
+
+Breached emails for domains controlled with the API
 
 ```csharp
 public class HIBPDomainBreachedEmails
@@ -25,10 +27,10 @@ public class HIBPDomainBreachedEmails
 
 ## Properties
 
-| Name                                           | Description |
-| ---------------------------------------------- | ----------- |
-| [BreachedEmails](properties/BreachedEmails.md) |             |
-| [Domain](properties/Domain.md)                 |             |
+| Name                               | Description |
+| ---------------------------------- | ----------- |
+| [Alias](properties/Alias.md)       |             |
+| [Breaches](properties/Breaches.md) |             |
 
 ___
 

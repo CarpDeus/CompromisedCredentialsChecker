@@ -5,17 +5,17 @@
   </auto-generated>   
 -->
 
-# Checker.PasswordCheck Method
+# Checker.PasswordCheckResults Method
 
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
 **Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
 
-Determine if the password has been found in a hack
+Determine if the password has been found in a hack, returns API results as a string
 
 ```csharp
-public static long PasswordCheck(string ApiKey, string UserAgent, string PlainPassword);
+public static string PasswordCheckResults(string ApiKey, string UserAgent, string PlainPassword);
 ```
 
 ## Parameters
@@ -34,9 +34,9 @@ The password to be checked
 
 ## Returns
 
-long
+string
 
-The number of data breaches the password has been found in
+Raw result from the API
 
 ___
 

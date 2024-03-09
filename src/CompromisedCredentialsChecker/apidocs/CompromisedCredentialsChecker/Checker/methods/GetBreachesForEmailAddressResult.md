@@ -5,17 +5,17 @@
   </auto-generated>   
 -->
 
-# Checker.GetBreachesForEmailAddress Method
+# Checker.GetBreachesForEmailAddressResult Method
 
 **Declaring Type:** [Checker](../index.md)  
 **Namespace:** [CompromisedCredentialsChecker](../../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
 **Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
 
-Determine all the breaches the email address has been involved in.
+Determine all the breaches the email address has been involved in. Returns API results as a string
 
 ```csharp
-public static List<HIBPBreach> GetBreachesForEmailAddress(string ApiKey, string UserAgent, string EmailAddress, bool NamesOnly = true, string DomainFilter = "", bool ExcludeUnverified = false);
+public static string GetBreachesForEmailAddressResult(string ApiKey, string UserAgent, string EmailAddress, bool NamesOnly = true, string DomainFilter = "", bool ExcludeUnverified = false);
 ```
 
 ## Parameters
@@ -46,9 +46,9 @@ If true, this excludes breaches that have been flagged as "unverified". By defau
 
 ## Returns
 
-List\<[HIBPBreach](../../HIBPBreach/index.md)\>
+string
 
-Array of breaches that the email address has been involved in. If the number of breaches is 0 (zero) than the email address has not been involved in a breach
+Raw result from the API
 
 ___
 

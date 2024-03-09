@@ -796,12 +796,13 @@ namespace CompromisedCredentialsChecker
     /// </summary>
     public class HIBPDomainBreachedEmails
     {
-        /// <summary>
-        /// Alias for the breached email
+        ////// <summary>
+        /// Alias for the breached email. Email would be {Alias}@{DomainName}
         /// </summary>
         public string Alias { get; set; }
-        /// <summary>
-        /// Array of breaches that the email has been found in 
+        ///// <summary>
+        /// Array of breaches that the email has been found in. 
+        /// Can be used to get more details using the GetSingleBreachedSiteByName method.
         /// </summary>
         public string[] Breaches { get; set; }
     }

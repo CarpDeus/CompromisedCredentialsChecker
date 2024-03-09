@@ -9,7 +9,7 @@
 
 **Namespace:** [CompromisedCredentialsChecker](../index.md)  
 **Assembly:** CompromisedCredentialsChecker  
-**Assembly Version:** 1.0.1+70dcb76e9819a5c8a0d665ce73776460846b2d39
+**Assembly Version:** 1.1.0+a9a21def0e2af4af3a7b63addf16a5ea0ec3c567
 
 .NET package for V3 API of https:\/\/haveibeenpwned.com\/
 
@@ -27,18 +27,28 @@ public class Checker
 
 ## Methods
 
-| Name                                                                                                            | Description                                                                       |
-| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [CheckPastes(string, string, string)](methods/CheckPastes.md)                                                   | Check for pastes that have been found that include this email address             |
-| [GetAllBreaches(string, string, string, bool)](methods/GetAllBreaches.md)                                       | Get a list of all of the breaches in the system                                   |
-| [GetAllDataClasses(string, string)](methods/GetAllDataClasses.md)                                               | Get all of the data classes in the system                                         |
-| [GetBreachedEmailsForDomain(string, string, string)](methods/GetBreachedEmailsForDomain.md)                     | Determine all the breaches for email addresses for a specific domain.             |
-| [GetBreachesForEmailAddress(string, string, string, bool, string, bool)](methods/GetBreachesForEmailAddress.md) | Determine all the breaches the email address has been involved in.                |
-| [GetMostRecentBreachAdded(string, string)](methods/GetMostRecentBreachAdded.md)                                 | Get the most recently added breach                                                |
-| [GetSingleBreachedSiteByName(string, string, string)](methods/GetSingleBreachedSiteByName.md)                   | Get a breach by name                                                              |
-| [GetSubscribedDomains(string, string)](methods/GetSubscribedDomains.md)                                         | Get a list of all domains that the API has subscribed to for breach notifications |
-| [GetSubscriptionStatus(string, string)](methods/GetSubscriptionStatus.md)                                       | Get details of the current subscription                                           |
-| [PasswordCheck(string, string, string)](methods/PasswordCheck.md)                                               | Determine if the password has been found in a hack                                |
+| Name                                                                                                                        | Description                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [CheckPastes(string, string, string)](methods/CheckPastes.md)                                                               | Check for pastes that have been found that include this email address                                              |
+| [CheckPastesResult(string, string, string)](methods/CheckPastesResult.md)                                                   | Check for pastes that have been found that include this email address. Returns API results as a string             |
+| [GetAllBreaches(string, string, string, bool)](methods/GetAllBreaches.md)                                                   | Get a list of all of the breaches in the system                                                                    |
+| [GetAllBreachesResult(string, string, string, bool)](methods/GetAllBreachesResult.md)                                       | Get a list of all of the breaches in the system. Returns API results as a string                                   |
+| [GetAllDataClasses(string, string)](methods/GetAllDataClasses.md)                                                           | Get all of the data classes in the system                                                                          |
+| [GetAllDataClassesResult(string, string)](methods/GetAllDataClassesResult.md)                                               | Get all of the data classes in the system. Returns API results as a string                                         |
+| [GetBreachedEmailsForDomain(string, string, string)](methods/GetBreachedEmailsForDomain.md)                                 | Determine all the breaches for email addresses for a specific domain.                                              |
+| [GetBreachedEmailsForDomainResult(string, string, string)](methods/GetBreachedEmailsForDomainResult.md)                     | Determine all the breaches for email addresses for a specific domain. Returns API results as a string              |
+| [GetBreachesForEmailAddress(string, string, string, bool, string, bool)](methods/GetBreachesForEmailAddress.md)             | Determine all the breaches the email address has been involved in.                                                 |
+| [GetBreachesForEmailAddressResult(string, string, string, bool, string, bool)](methods/GetBreachesForEmailAddressResult.md) | Determine all the breaches the email address has been involved in. Returns API results as a string                 |
+| [GetMostRecentBreachAdded(string, string)](methods/GetMostRecentBreachAdded.md)                                             | Get the most recently added breach                                                                                 |
+| [GetMostRecentBreachAddedResult(string, string)](methods/GetMostRecentBreachAddedResult.md)                                 | Get the most recently added breach                                                                                 |
+| [GetSingleBreachedSiteByName(string, string, string)](methods/GetSingleBreachedSiteByName.md)                               | Get a breach by name                                                                                               |
+| [GetSingleBreachedSiteByNameResult(string, string, string)](methods/GetSingleBreachedSiteByNameResult.md)                   | Get a breach by name. Returns API results as a string                                                              |
+| [GetSubscribedDomains(string, string)](methods/GetSubscribedDomains.md)                                                     | Get a list of all domains that the API has subscribed to for breach notifications                                  |
+| [GetSubscribedDomainsResult(string, string)](methods/GetSubscribedDomainsResult.md)                                         | Get a list of all domains that the API has subscribed to for breach notifications. Returns API results as a string |
+| [GetSubscriptionStatus(string, string)](methods/GetSubscriptionStatus.md)                                                   | Get details of the current subscription                                                                            |
+| [GetSubscriptionStatusResult(string, string)](methods/GetSubscriptionStatusResult.md)                                       | Get details of the current subscription. Returns API results as a string                                           |
+| [PasswordCheck(string, string, string)](methods/PasswordCheck.md)                                                           | Determine if the password has been found in a hack                                                                 |
+| [PasswordCheckResults(string, string, string)](methods/PasswordCheckResults.md)                                             | Determine if the password has been found in a hack, returns API results as a string                                |
 
 ___
 
